@@ -11,11 +11,12 @@ from dayu_widgets.utils import display_formatter
 from dayu_widgets.utils import font_formatter
 from dayu_widgets.utils import get_obj_value
 from dayu_widgets.utils import icon_formatter
+from dayu_widgets.utils import safe_qcolor_formatter
 from dayu_widgets.utils import set_obj_value
 
 
 SETTING_MAP = {
-    QtCore.Qt.BackgroundRole: {"config": "bg_color", "formatter": QtGui.QColor},
+    QtCore.Qt.BackgroundRole: {"config": "bg_color", "formatter": safe_qcolor_formatter},
     QtCore.Qt.DisplayRole: {"config": "display", "formatter": display_formatter},
     QtCore.Qt.EditRole: {"config": "edit", "formatter": None},
     QtCore.Qt.TextAlignmentRole: {
@@ -26,7 +27,7 @@ SETTING_MAP = {
             "center": QtCore.Qt.AlignCenter,
         },
     },
-    QtCore.Qt.ForegroundRole: {"config": "color", "formatter": QtGui.QColor},
+    QtCore.Qt.ForegroundRole: {"config": "color", "formatter": safe_qcolor_formatter},
     QtCore.Qt.FontRole: {"config": "font", "formatter": font_formatter},
     QtCore.Qt.DecorationRole: {"config": "icon", "formatter": icon_formatter},
     QtCore.Qt.ToolTipRole: {"config": "tooltip", "formatter": display_formatter},

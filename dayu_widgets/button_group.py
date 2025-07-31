@@ -60,6 +60,7 @@ class MButtonGroupBase(QtWidgets.QWidget):
 
         if data_dict.get("text"):
             button.setProperty("text", data_dict.get("text"))
+            button.setMinimumWidth(len(data_dict.get("text")) * 10)
 
         if data_dict.get("icon"):
             button.setProperty("icon", data_dict.get("icon"))

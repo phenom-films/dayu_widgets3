@@ -547,14 +547,46 @@ def generate_text_pixmap(width, height, text, alignment=QtCore.Qt.AlignCenter, b
     return pix_map
 
 
+def safe_qcolor_formatter(color):
+    """
+    Safe QColor formatter that handles various color input types.
+    This is used to replace direct QtGui.QColor calls in formatters.
+    """
+    if color is None:
+        return None
+
+    # If it's already a QColor, return it
+    if isinstance(color, QtGui.QColor):
+        return color
+
+    # Handle string colors
+    if isinstance(color, str):
+        if color.lower() == "transparent":
+            return QtGui.QColor(0, 0, 0, 0)  # Transparent color
+        elif color.startswith("#"):
+            return QtGui.QColor(color)
+        elif color.count(",") == 2:
+            try:
+                r, g, b = map(int, color.split(","))
+                return QtGui.QColor(r, g, b)
+            except ValueError:
+                return QtGui.QColor(color)  # Fallback to string constructor
+        else:
+            # Try to create QColor from color name
+            return QtGui.QColor(color)
+
+    # For other types, try to convert to string first
+    try:
+        return QtGui.QColor(str(color))
+    except:
+        return None
+
+
 def get_color_icon(color, size=24):
     scale_x, y = get_scale_factor()
     pix = QtGui.QPixmap(size * scale_x, size * scale_x)
-    q_color = color
-    if isinstance(color, str):
-        if color.startswith("#"):
-            q_color = QtGui.QColor(str)
-        elif color.count(",") == 2:
-            q_color = QtGui.QColor(*tuple(map(int, color.split(","))))
+    q_color = safe_qcolor_formatter(color)
+    if q_color is None:
+        q_color = QtGui.QColor(0, 0, 0, 0)  # Transparent fallback
     pix.fill(q_color)
     return QtGui.QIcon(pix)
