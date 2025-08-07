@@ -81,3 +81,11 @@ class MItemViewSet(QtWidgets.QWidget):
     def insert_widget(self, widget):
         """Use can insert extra widget into search layout."""
         self._search_lay.insertWidget(0, widget)
+
+    @property
+    def search_line_edit(self):
+        return self._search_line_edit
+
+    @property
+    def search_lay(self):
+        return self._search_lay

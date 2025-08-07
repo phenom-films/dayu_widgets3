@@ -155,7 +155,7 @@ class MTableModel(QtCore.QAbstractItemModel):
         if hasattr(children_obj, "next") or (children_obj is None):
             return 0
         else:
-            return len(children_obj)
+            return len(list(children_obj))
 
     def hasChildren(self, parent_index=None):
         if parent_index and parent_index.isValid():
