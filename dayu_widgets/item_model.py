@@ -233,13 +233,14 @@ class MTableModel(QtCore.QAbstractItemModel):
                 set_obj_value(data_obj, key, value)
                 self.dataChanged.emit(index, index)
 
-                # 更新它的children
-                for row, sub_obj in enumerate(get_obj_value(data_obj, "children", [])):
-                    set_obj_value(sub_obj, key, value)
-                    sub_index = self.index(row, index.column(), index)
-                    self.dataChanged.emit(sub_index, sub_index)
-
+                # 是否同步更新parent， child
                 if self.sync_relation:
+                    # 更新它的children
+                    for row, sub_obj in enumerate(get_obj_value(data_obj, "children", [])):
+                        set_obj_value(sub_obj, key, value)
+                        sub_index = self.index(row, index.column(), index)
+                        self.dataChanged.emit(sub_index, sub_index)
+
                     # 更新它的parent
                     parent_index = index.parent()
                     if parent_index.isValid():
