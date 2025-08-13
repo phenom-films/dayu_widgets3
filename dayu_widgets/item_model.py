@@ -47,8 +47,9 @@ SETTING_MAP = {
 
 
 class MTableModel(QtCore.QAbstractItemModel):
-    def __init__(self, parent=None):
+    def __init__(self, sync_relation=True, parent=None):
         super(MTableModel, self).__init__(parent)
+        self.sync_relation = sync_relation
         self.origin_count = 0
         self.root_item = {"name": "root", "children": []}
         self.data_generator = None
@@ -238,21 +239,22 @@ class MTableModel(QtCore.QAbstractItemModel):
                     sub_index = self.index(row, index.column(), index)
                     self.dataChanged.emit(sub_index, sub_index)
 
-                # 更新它的parent
-                parent_index = index.parent()
-                if parent_index.isValid():
-                    parent_obj = parent_index.internalPointer()
-                    new_parent_value = value
-                    old_parent_value = get_obj_value(parent_obj, key)
-                    parent = get_obj_value(data_obj, "_parent")
-                    parent_children = get_obj_value(parent, "children", [])
-                    for sibling_obj in parent_children:
-                        if value != get_obj_value(sibling_obj, key):
-                            new_parent_value = 1
-                            break
-                    if new_parent_value != old_parent_value:
-                        set_obj_value(parent_obj, key, new_parent_value)
-                        self.dataChanged.emit(parent_index, parent_index)
+                if self.sync_relation:
+                    # 更新它的parent
+                    parent_index = index.parent()
+                    if parent_index.isValid():
+                        parent_obj = parent_index.internalPointer()
+                        new_parent_value = value
+                        old_parent_value = get_obj_value(parent_obj, key)
+                        parent = get_obj_value(data_obj, "_parent")
+                        parent_children = get_obj_value(parent, "children", [])
+                        for sibling_obj in parent_children:
+                            if value != get_obj_value(sibling_obj, key):
+                                new_parent_value = 1
+                                break
+                        if new_parent_value != old_parent_value:
+                            set_obj_value(parent_obj, key, new_parent_value)
+                            self.dataChanged.emit(parent_index, parent_index)
             else:
                 set_obj_value(data_obj, key, value)
                 # 采用 self.dataChanged.emit方式在houdini16里面会报错
